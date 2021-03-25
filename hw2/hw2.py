@@ -40,7 +40,7 @@ def mAveBlur(img):
     :param img: 輸入影像
     :return: 輸出影像
     """
-    _img = cv2.copyMakeBorder(img, 1, 1, 1, 1, cv2.BORDER_WRAP)
+    _img = cv2.copyMakeBorder(img, 1, 1, 1, 1, cv2.BORDER_REPLICATE)
     w, h, c = _img.shape
     for _w in range(1, w - 1):
         for _h in range(1, h - 1):
@@ -59,7 +59,7 @@ def mMedianBlur(img):
     :return: 輸出影像
     """
     # 上下左右補上寬度為1的邊框
-    _img = cv2.copyMakeBorder(img, 1, 1, 1, 1, cv2.BORDER_CONSTANT,value=[0,0,0])
+    _img = cv2.copyMakeBorder(img, 1, 1, 1, 1, cv2.BORDER_REPLICATE)
     w, h, c = _img.shape
     for _w in range(1, w-1):
         for _h in range(1, h-1):
