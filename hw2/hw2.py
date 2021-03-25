@@ -34,6 +34,24 @@ def addSaltPepper(img, SNR):
     return _img
 
 
+def mAveBlur(img):
+    """
+    自己實作一個平均濾波器
+    :param img: 輸入影像
+    :return: 輸出影像
+    """
+    _img = cv2.copyMakeBorder(img, 1, 1, 1, 1, cv2.BORDER_WRAP)
+    w, h, c = _img.shape
+    for _w in range(1, w - 1):
+        for _h in range(1, h - 1):
+            for _c in range(0, c):
+                roi = _img[_w - 1:_w + 2, _h - 1:_h + 2, _c]
+                _img[_w][_h][_c] = np.mean(roi)
+
+    _img = _img[1:w - 1, 1:h - 1, 0:3]
+    return _img
+
+
 def mMedianBlur(img):
     """
     自己實作一個size為3x3的中位濾波器
@@ -66,15 +84,31 @@ if __name__ == '__main__':
     im = cv2.imread(file)
     im = cv2.resize(im, size)
     im_add_noise = addSaltPepper(im, 0.95)
-    im_filter = cv2.medianBlur(im_add_noise, 3)
+    # average blur
+    im_ave_blur = cv2.blur(im_add_noise, (3, 3))
+    im_my_ave_blur = mAveBlur(im_add_noise)
+    # median blur
+    im_median_blur = cv2.medianBlur(im_add_noise, 3)
     im_my_filter = mMedianBlur(im_add_noise)
 
+    # put text
     mPutText(im, 'resize (128,128)')
     mPutText(im_add_noise, 'add noise')
-    mPutText(im_filter, 'opencv medianBlur')
+    # average blur
+    mPutText(im_ave_blur, 'opencv aveBlur')
+    mPutText(im_my_ave_blur, 'my aveBlur')
+    # median blur
+    mPutText(im_median_blur, 'opencv medianBlur')
     mPutText(im_my_filter, 'my medianBlur')
 
-    output = np.concatenate((im, im_add_noise, im_filter, im_my_filter), axis=1)
+    output = np.concatenate((
+        im,
+        im_add_noise,
+        im_ave_blur,
+        im_my_ave_blur,
+        im_median_blur,
+        im_my_filter
+    ),axis=1)
     cv2.imshow(file, output)
 
     cv2.waitKey(0)
